@@ -11,7 +11,6 @@ import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
