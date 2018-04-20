@@ -1,0 +1,32 @@
+{
+  "fld0" : "$numberLong",
+  "fld1" : "$date",
+  "fld2" : {
+    "$sentence": {
+      "words": 5
+    }
+  },
+  "fld3" : {
+    "$sentence": {
+      "words": 5
+    }
+  },
+  "fld4" : {
+    "$sentence": {
+      "words": 4
+    }
+  },
+  "fld5" : "$date",
+  "fld6" : "$numberLong",
+  "fld7" : {
+    "$sentence": {
+      "words": 4
+    }
+  },
+  "fld8" : {
+    "$sentence": {
+      "words": 4
+    }
+  },
+  "fld9" : "$numberLong"
+}

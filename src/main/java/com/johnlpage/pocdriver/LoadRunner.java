@@ -3,14 +3,16 @@ package com.johnlpage.pocdriver;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
+import uk.dioxic.mgenerate.util.BsonUtil;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,11 +37,13 @@ public class LoadRunner {
             coll.drop();
         }
 
-        TestRecord testRecord = new TestRecord(testOpts);
-        List<String> fields = testRecord.listFields();
-        for (int x = 0; x < testOpts.secondaryidx; x++) {
-            coll.createIndex(new Document(fields.get(x), 1));
-        }
+        TestRecord testRecord = new BasicTestRecord(testOpts);
+        Collection<String> fields = testRecord.listFields();
+
+        fields.stream()
+                .limit(testOpts.secondaryidx)
+                .forEach(field -> coll.createIndex(new Document(field, 1)));
+
         if (testOpts.fulltext) {
             IndexOptions options = new IndexOptions();
             options.background(true);
@@ -82,8 +86,9 @@ public class LoadRunner {
                 //System.out.println("Enabling Sharding on Database");
                 admindb.runCommand(new Document("enableSharding", testOpts.databaseName));
             } catch (Exception e) {
-                if (!e.getMessage().contains("already enabled"))
+                if (!e.getMessage().contains("already enabled")) {
                     System.out.println(e.getMessage());
+                }
             }
 
 
@@ -92,8 +97,9 @@ public class LoadRunner {
                 admindb.runCommand(new Document("shardCollection",
                         testOpts.databaseName + "." + testOpts.collectionName).append("key", new Document("_id", 1)));
             } catch (Exception e) {
-                if (!e.getMessage().contains("already"))
+                if (!e.getMessage().contains("already")) {
                     System.out.println(e.getMessage());
+                }
             }
 
 
@@ -154,8 +160,16 @@ public class LoadRunner {
 
     LoadRunner(POCTestOptions testOpts) {
         try {
+            MongoClientOptions.Builder optBuilder = MongoClientOptions.builder();
+
+            // if we're using mgenerate templates, we need to use a specialized codec for that
+            if (testOpts.template != null) {
+                optBuilder.codecRegistry(BsonUtil.getRegistry());
+            }
+
             //For not authentication via connection string passing of user/pass only
-            mongoClient = new MongoClient(new MongoClientURI(testOpts.connectionDetails));
+            mongoClient = new MongoClient(new MongoClientURI(testOpts.connectionDetails, optBuilder));
+
         } catch (Exception e) {
 
             e.printStackTrace();

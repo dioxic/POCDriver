@@ -52,12 +52,12 @@ public class POCDriver {
         int[] arr = new int[2];
         arr[0] = testOpts.arraytop;
         arr[1] = testOpts.arraynext;
-        tr = new TestRecord(testOpts.numFields, testOpts.depth, testOpts.textFieldLen,
+        tr = new BasicTestRecord(testOpts.numFields, testOpts.depth, testOpts.textFieldLen,
                 1, 12345678, testOpts.NUMBER_SIZE, arr, testOpts.blobSize);
         //System.out.println(tr);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(tr.internalDoc.toJson());
+        JsonElement je = jp.parse(tr.getDocument().toJson());
 
         String json = gson.toJson(je);
         StringBuilder newJson = new StringBuilder();
@@ -91,7 +91,7 @@ public class POCDriver {
         //Thanks to Ross Lawley for this bit of black magic
         BasicOutputBuffer buffer = new BasicOutputBuffer();
         BsonBinaryWriter binaryWriter = new BsonBinaryWriter(buffer);
-        new DocumentCodec().encode(binaryWriter, tr.internalDoc, EncoderContext.builder().build());
+        new DocumentCodec().encode(binaryWriter, tr.getDocument(), EncoderContext.builder().build());
         int length = binaryWriter.getBsonOutput().getSize();
 
         System.out.println(String.format("Records are %.2f KB each as BSON", (float) length / 1024));

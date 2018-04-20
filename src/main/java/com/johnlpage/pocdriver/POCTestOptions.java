@@ -58,6 +58,7 @@ public class POCTestOptions {
 	boolean helpOnly = false;
 	String connectionDetails = "mongodb://localhost:27017";
 	boolean fulltext;
+	String template;
 	
 	POCTestOptions(String[] args) throws ParseException
 	{
@@ -97,7 +98,8 @@ public class POCTestOptions {
 		cliopt.addOption(null,"binary",true,"add a binary blob of size KB");
 		cliopt.addOption(null,"rangedocs",true,"Number of documents to fetch for range queries (default 10)");
 		cliopt.addOption(null,"updatefields",true,"Number of fields to update (default 1)");
-		cliopt.addOption(null,"projectfields",true,"Number of fields to project in finds (default 0, which is no projection)");				
+		cliopt.addOption(null,"projectfields",true,"Number of fields to project in finds (default 0, which is no projection)");
+        cliopt.addOption(null,"template",true,"The template file to use for generating records");
 		
 		CommandLine cmd = parser.parse(cliopt, args);
 		
@@ -289,5 +291,10 @@ public class POCTestOptions {
 		{
 			projectFields = Integer.parseInt(cmd.getOptionValue("projectfields"));
 		}
+
+        if(cmd.hasOption("template"))
+        {
+            template = cmd.getOptionValue("template");
+        }
 	}
 }
