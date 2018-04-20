@@ -15,6 +15,7 @@ import org.bson.Document;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
@@ -320,10 +321,16 @@ public class MongoWorker implements Runnable {
         if (testOpts.projectFields == 0) {
             myDoc = coll.find(query).first();
         }
+        else if (templateTestRecord != null) {
+            projFields = templateTestRecord.listFields()
+                    .stream()
+                    .limit(Math.min(templateTestRecord.listFields().size(), testOpts.projectFields))
+                    .collect(Collectors.toList());
+            myDoc = coll.find(query).projection(fields(include(projFields))).first();
+        }
         else {
-            int numProjFields = (testOpts.projectFields <= testOpts.numFields) ? testOpts.projectFields : testOpts.numFields;
             int i = 0;
-            while (i < numProjFields) {
+            while (i < Math.min(testOpts.projectFields, testOpts.numFields)) {
                 projFields.add("fld" + i);
                 i++;
             }
@@ -356,6 +363,13 @@ public class MongoWorker implements Runnable {
         if (testOpts.projectFields == 0) {
             cursor = coll.find(query).limit(testOpts.rangeDocs).iterator();
         }
+        else if (templateTestRecord != null) {
+            projFields = templateTestRecord.listFields()
+                    .stream()
+                    .limit(Math.min(templateTestRecord.listFields().size(), testOpts.projectFields))
+                    .collect(Collectors.toList());
+            cursor = coll.find(query).projection(fields(include(projFields))).limit(testOpts.rangeDocs).iterator();
+        }
         else {
             int numProjFields = (testOpts.projectFields <= testOpts.numFields) ? testOpts.projectFields : testOpts.numFields;
             int i = 0;
@@ -365,6 +379,7 @@ public class MongoWorker implements Runnable {
             }
             cursor = coll.find(query).projection(fields(include(projFields))).limit(testOpts.rangeDocs).iterator();
         }
+
         while (cursor.hasNext()) {
 
             @SuppressWarnings("unused")

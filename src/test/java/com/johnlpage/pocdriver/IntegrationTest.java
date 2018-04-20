@@ -13,12 +13,12 @@ public class IntegrationTest {
     @Test
     public void runTemplateTest() {
         String templateFile = "src/test/resources/template.json";
-        runGenericTest(String.format("-i100 -t%d -e -nPOCDB.template -d%d --template %s", THREADS, DURATION, templateFile));
+        runGenericTest(String.format("-i50 -u50 -k50 -r50 -t%d -e -nPOCDB.template -d%d --template %s", THREADS, DURATION, templateFile));
     }
 
     @Test
     public void runBasicTest() {
-        runGenericTest(String.format("-i100 -t%d -e -nPOCDB.basic -d%d", THREADS, DURATION));
+        runGenericTest(String.format("-i50 -u50 -k50 -r50 -t%d -e -nPOCDB.basic -d%d", THREADS, DURATION));
     }
 
     private void runGenericTest(String args) {
