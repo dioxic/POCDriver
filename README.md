@@ -99,6 +99,7 @@ Record shape options
 -f aside from arrays and _id add f fields to the record, after the first 3 every third is an integer, every fifth a date, the rest are text.
 -l how many characters to have in the text fields
 --depth The depth of the document to create.
+--template path to JSON template file (see https://github.com/rueckstiess/mgeneratejs for formatting syntax)
 ```
 
 Example
@@ -168,6 +169,7 @@ Requirements to Build
   * gson-2.2.4.jar
   * loremipsum-1.0.jar (http://sourceforge.net/projects/loremipsum/files/)
   * mongo-java-driver-3.6.3.jar
+  * mgenerate4j-0.0.2 (https://github.com/dioxic/mgenerate4j)
 
 
 Troubleshooting
